@@ -16,6 +16,7 @@ var tasks []Task
 
 const filename = "tasks.json"
 
+// loadTasks loads the json file into the tasks[]
 func loadTasks() {
 	file, err := os.ReadFile(filename)
 
@@ -24,19 +25,27 @@ func loadTasks() {
 	}
 }
 
+// saveTasks saves the tasks json file in accordance to the tasks[]
 func saveTasks() {
 	data, _ := json.MarshalIndent(tasks, "", "  ")
 	os.WriteFile(filename, data, 0644)
 }
 
-func addtask(title string) {
+// addTask takes in a string and creates a task with the string as a title
+// defaults to COMPLETE: false
+func addTask(title string) {
 	id := len(tasks) + 1
 	tasks = append(tasks, Task{ID: id, TITLE: title, COMPLETE: false})
 	saveTasks()
 	fmt.Println("Task added successfully!")
 }
 
+// listTask lists all task that are save in the json file
 func listTask() {
+	if len(tasks) == 0 {
+		fmt.Println("No current tasks.")
+	}
+
 	for _, task := range tasks {
 		status := "❌"
 		if task.COMPLETE {
@@ -46,6 +55,7 @@ func listTask() {
 	}
 }
 
+// completeTask takes in an id and changes its statur to complete
 func completeTask(id int) {
 	for i, task := range tasks {
 		if task.ID == int(id) {
@@ -73,7 +83,7 @@ func main() {
 			fmt.Println("Usage: go-task-manager add <task>")
 			return
 		}
-		addtask(os.Args[2])
+		addTask(os.Args[2])
 	case "list":
 		listTask()
 	case "done":
